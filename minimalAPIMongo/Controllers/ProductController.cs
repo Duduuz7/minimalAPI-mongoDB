@@ -70,37 +70,57 @@ namespace minimalAPIMongo.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, Product product)
+        [HttpPut()]
+        public async Task<ActionResult> Put(Product p)
         {
 
             try
             {
-                var filter = Builders<Product>.Filter.Eq(p => p.Id, id);
-                var res = await _product.Find(filter).ToListAsync();
+                //Versao mais complexa ----------------------------------------
 
-                if (product.Name == null)
+                //var res = await _product.Find(filter).ToListAsync();
+
+                //var product = await _product.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+
+                //    if (product.Name == null)
+                //    {
+                //        product.Name = product.First().Name;
+                //    }
+
+                //    if (product.Price == 0)
+                //    {
+                //        product.Price = product.First().Price;
+                //    }
+
+                //    if (product.AdditionalAttributes == null)
+                //    {
+                //        product.AdditionalAttributes = product.First().AdditionalAttributes;
+                //    }
+
+                //    var update = Builders<Product>.Update
+                //        .Set(p => p.Name, product.Name)
+                //        .Set(p => p.Price, product.Price);
+
+                //    await _product.UpdateOneAsync(filter, update);
+
+                //    return NoContent();
+
+
+                //Versao simples -----------------------------------
+
+                var filter = Builders<Product>.Filter.Eq(x => x.Id, p.Id);
+
+                if (filter != null)
                 {
-                    product.Name = res.First().Name;
+                    //substituindo o objeto buscado pelo novo 
+                    await _product.ReplaceOneAsync(filter, p);
+
+                    return Ok(p);
                 }
 
-                if (product.Price == 0)
-                {
-                    product.Price = res.First().Price;
-                }
+                return NotFound();
 
-                if (product.AdditionalAttributes == null)
-                {
-                    product.AdditionalAttributes = res.First().AdditionalAttributes;
-                }
-
-                var update = Builders<Product>.Update
-                    .Set(p => p.Name, product.Name)
-                    .Set(p => p.Price, product.Price);
-
-                await _product.UpdateOneAsync(filter, update);
-
-                return NoContent();
             }
             catch (Exception e)
             {
@@ -113,10 +133,14 @@ namespace minimalAPIMongo.Controllers
         {
             try
             {
-                var filter = Builders<Product>.Filter.Eq(p => p.Id, id);
-                var result = _product.Find(filter);
+                //var filter = Builders<Product>.Filter.Eq(p => p.Id, id);
+                //var result = _product.Find(filter);
 
-                return Ok(result.First());
+                //return Ok(result.First());
+
+                var product = await _product.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+                return product is not null ? Ok(product) : NotFound();
             }
             catch (Exception e)
             {

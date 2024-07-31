@@ -31,7 +31,30 @@ namespace minimalAPIMongo.Controllers
             {
                 var orders = await _order.Find(FilterDefinition<Order>.Empty).ToListAsync();
 
-                return Ok(orders);
+
+                //Foreach para setar os produtos a partir da lista Orders e o client
+
+                //foreach (var order in orders)
+                //{
+                //Verifica se eciste um id de prodto
+                //    if (order.ProductId != null)
+                //    {
+                //Filtra os que tem o mesmo idProduto e pega esse id
+                //        var filter = Builders<Product>.Filter.In(p => p.Id, order.ProductId);
+
+                //usa o Id captado no filtro anterior para buscar os produtos pelo id, ja setando os Produtos da Order com esses produtos buscados aq
+                //        order.Products = await _product.Find(filter).ToListAsync();
+                //    }
+
+                      //if (order.ClientId != null)
+                      //{
+                      //   order.Client = await _client.Find(x => x.Id == order.ClientId).FirstOrDefaultAsync();
+                      //}
+                    //}
+
+
+
+                    return Ok(orders);
             }
             catch (Exception e)
             {
